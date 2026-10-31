@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Send Josh a Rejection</title>
+  <meta name="description" content="Submit a rejection challenge for Josh to try on camera." />
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0E0E0E;
+      --surface: #171717;
+      --surface-2: #1F1F1F;
+      --line: #2A2A2A;
+      --text: #F2EEE9;
+      --muted: #8F8A84;
+      --accent: #C8523A;
+      --accent-press: #A8432F;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    body { min-height: 100dvh; display: flex; flex-direction: column; }
+    main { width: 100%; max-width: 560px; margin: 0 auto; padding: 32px 16px 24px; flex: 1; }
+
+    .eyebrow {
+      font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600;
+      color: var(--muted); text-align: center;
+    }
+    .eyebrow b { color: var(--accent); font-weight: 600; }
+
+    h1 {
+      font-family: var(--serif); font-weight: 400; text-align: center;
+      font-size: clamp(34px, 9vw, 48px); line-height: 1.05; letter-spacing: -.01em;
+      margin: 14px 0 10px;
+    }
+    h1 em { color: var(--accent); font-style: italic; }
+    .sub { text-align: center; color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 34ch; margin: 0 auto; }
+
+    /* Phone mockups */
+    .phones {
+      position: relative; height: 330px; margin: 34px auto 30px; max-width: 420px;
+    }
+    .phone {
+      position: absolute; top: 0; width: 150px; aspect-ratio: 9 / 19.5;
+      border-radius: 26px; background: #000; border: 5px solid #262626;
+      box-shadow: 0 20px 50px rgba(0,0,0,.6); overflow: hidden;
+    }
+    .phone::before { /* notch */
+      content: ""; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+      width: 44px; height: 12px; background: #000; border-radius: 10px; z-index: 2;
+    }
+    .phone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .phone .ph {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+      background: linear-gradient(160deg, #1d1d1d, #0f0f0f);
+    }
+    .phone .ph span:first-child { font-family: var(--serif); font-size: 26px; letter-spacing: 0; text-transform: none; color: var(--text); }
+    .phone.left  { left: 50%; transform: translateX(-150%) rotate(-8deg); top: 28px; }
+    .phone.right { left: 50%; transform: translateX(50%) rotate(8deg); top: 28px; }
+    .phone.center { left: 50%; transform: translateX(-50%); z-index: 3; border-color: #333; }
+    .phone.center .ph { background: radial-gradient(circle at 50% 40%, rgba(200,82,58,.25), #0E0E0E 70%); }
+    .phone.center .ph span:first-child { color: var(--accent); font-size: 44px; }
+
+    /* Form */
+    .proof {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 14px; color: var(--muted); margin-bottom: 12px; min-height: 20px;
+      opacity: 0; transition: opacity .4s;
+    }
+    .proof.show { opacity: 1; }
+    .proof .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(200,82,58,.18); }
+    .proof strong { color: var(--text); font-weight: 600; }
+
+    form { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; }
+    label.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    textarea {
+      width: 100%; min-height: 130px; resize: vertical; border: 0; outline: none;
+      background: transparent; color: var(--text); font: 17px/1.45 var(--sans); padding: 4px 4px 0;
+    }
+    textarea::placeholder { color: #5E5A56; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+    .count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .count.warn { color: var(--accent); }
+    button {
+      appearance: none; border: 0; cursor: pointer; border-radius: 999px;
+      background: var(--accent); color: #fff; font: 600 15px var(--sans);
+      padding: 13px 22px; min-height: 46px; transition: background .15s, opacity .15s, transform .1s;
+    }
+    button:active { transform: scale(.98); background: var(--accent-press); }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    .hp { position: absolute; left: -9999px; } /* honeypot for bots */
+    .hint { margin-top: 12px; font-size: 13px; color: var(--muted); text-align: center; }
+
+    /* Thank-you state */
+    .thanks { display: none; text-align: center; padding: 28px 12px; }
+    .thanks h2 { font-family: var(--serif); font-weight: 400; font-size: 30px; margin-bottom: 8px; }
+    .thanks p { color: var(--muted); font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
+    .ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .ghost:active { background: var(--surface-2); }
+    .sent form { display: none; }
+    .sent .thanks { display: block; }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
+      background: var(--surface-2); border: 1px solid var(--line); color: var(--text);
+      padding: 12px 18px; border-radius: 12px; font-size: 14px; opacity: 0; pointer-events: none;
+      transition: opacity .25s, transform .25s; max-width: calc(100% - 32px);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    footer { text-align: center; padding: 28px 16px calc(28px + env(safe-area-inset-bottom)); }
+    footer a {
+      color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border: 1px solid var(--line); border-radius: 999px;
+    }
+    footer a:hover { border-color: var(--accent); }
+    footer small { display: block; margin-top: 14px; color: #5E5A56; font-family: var(--serif); font-style: italic; font-size: 13px; }
+
+    @media (max-width: 380px) {
+      .phone { width: 128px; }
+      .phones { height: 290px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <p class="eyebrow">Rejection reps · <b>live on TikTok</b></p>
+    <h1>Send Josh a <em>rejection.</em></h1>
+    <p class="sub">Give me a challenge that'll probably get me told no. I'll try the best ones on camera.</p>
+
+    <!-- Swap the placeholders for real screenshots: drop images in /img and uncomment the <img> tags -->
+    <div class="phones" aria-hidden="true">
+      <div class="phone left">
+        <!-- <img src="img/tiktok-1.jpg" alt="" /> -->
+        <div class="ph"><span>▶</span><span>TikTok 1</span></div>
+      </div>
+      <div class="phone center">
+        <!-- <img src="img/app-tracker.jpg" alt="" /> -->
+        <div class="ph"><span>again.</span><span>Tracker</span></div>
+      </div>
+      <div class="phone right">
+        <!-- <img src="img/tiktok-2.jpg" alt="" /> -->
+        <div class="ph"><span>▶</span><span>TikTok 2</span></div>
+      </div>
+    </div>
+
+    <p class="proof" id="proof" aria-live="polite"><span class="dot"></span><span id="proofText"></span></p>
+
+    <form id="form" novalidate>
+      <label class="vh" for="idea">Your rejection challenge</label>
+      <textarea id="idea" name="idea" maxlength="500"
+        placeholder="Ask a stranger to trade sandwiches…"></textarea>
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="row">
+        <span class="count" id="count">0 / 500</span>
+        <button type="submit" id="submit" disabled>Send it</button>
+      </div>
+    </form>
+
+    <div class="thanks" role="status">
+      <h2>Got it. Thank you.</h2>
+      <p>If it scares me a little, it's probably going on camera.<br />Follow along to see if I do it.</p>
+      <button class="ghost" id="again" type="button">Send another</button>
+    </div>
+  </main>
+
+  <footer>
+    <a id="tiktok" href="https://www.tiktok.com/@YOUR_HANDLE" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.77.12V9.79a5.7 5.7 0 1 0 4.91 5.64V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3a4.28 4.28 0 0 1-3.24-1.48z"/></svg>
+      Follow on TikTok
+    </a>
+    <small>get rejected. keep going.</small>
+  </footer>
+
+  <div class="toast" id="toast" role="alert"></div>
+
+  <script type="module">
+    // ─── Config ───────────────────────────────────────────────
+    // Paste from Supabase → Project Settings → API. The anon key is safe
+    // to be public; the database rules (schema.sql) only allow inserts.
+    const SUPABASE_URL = "";
+    const SUPABASE_ANON_KEY = "";
+    const MIN_COUNT_TO_SHOW = 5; // hide the counter until it's not embarrassing
+
+    // ─── Backend (falls back to a local demo mode with no keys) ──
+    const demo = !SUPABASE_URL || !SUPABASE_ANON_KEY;
+    let sb = null;
+    if (!demo) {
+      const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+      sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    const api = {
+      async count() {
+        if (demo) { try { return 37 + Number(localStorage.getItem("demoCount") || 0); } catch { return 37; } }
+        const { data, error } = await sb.rpc("get_submission_count");
+        if (error) throw error;
+        return data;
+      },
+      async submit(idea) {
+        if (demo) {
+          await new Promise(r => setTimeout(r, 500));
+          try { localStorage.setItem("demoCount", String(Number(localStorage.getItem("demoCount") || 0) + 1)); } catch {}
+          return;
+        }
+        const { error } = await sb.from("challenge_ideas").insert({
+          idea,
+          referrer: document.referrer || null,
+          user_agent: navigator.userAgent.slice(0, 300),
+        });
+        if (error) throw error;
+      },
+    };
+
+    // ─── UI ───────────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const app = $("app"), form = $("form"), idea = $("idea"), btn = $("submit"),
+          countEl = $("count"), proof = $("proof"), proofText = $("proofText"), toast = $("toast");
+
+    function toastMsg(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastMsg.t);
+      toastMsg.t = setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    async function refreshCount() {
+      try {
+        const n = await api.count();
+        if (n >= MIN_COUNT_TO_SHOW) {
+          proofText.innerHTML = `<strong>${n.toLocaleString()}</strong> people have sent Josh a rejection`;
+          proof.classList.add("show");
+        }
+      } catch { /* silently hide counter on error */ }
+    }
+
+    idea.addEventListener("input", () => {
+      const len = idea.value.length;
+      countEl.textContent = `${len} / 500`;
+      countEl.classList.toggle("warn", len > 450);
+      btn.disabled = idea.value.trim().length < 3;
+    });
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (form.website.value) return; // bot filled the honeypot
+      const text = idea.value.trim();
+      if (text.length < 3) return;
+      btn.disabled = true; btn.textContent = "Sending…";
+      try {
+        await api.submit(text);
+        idea.value = ""; countEl.textContent = "0 / 500";
+        app.classList.add("sent");
+        refreshCount();
+      } catch (err) {
+        console.error(err);
+        toastMsg("That didn't go through. Try again?");
+        btn.disabled = false;
+      } finally {
+        btn.textContent = "Send it";
+      }
+    });
+
+    $("again").addEventListener("click", () => {
+      app.classList.remove("sent");
+      btn.disabled = true;
+      idea.focus();
+    });
+
+    if (demo) console.info("Demo mode: add Supabase keys to go live.");
+    refreshCount();
+  </script>
+</body>
+</html>
