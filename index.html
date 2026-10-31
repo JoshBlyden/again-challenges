@@ -36,6 +36,12 @@
     .title {
       position: relative; width: 100%; max-width: 445px; aspect-ratio: 445 / 79.7; margin: 0 auto;
     }
+    .title {
+      display: block; cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .15s ease;
+    }
+    .title:active { transform: scale(.97); }
+    .title:focus-visible { outline: 2px solid var(--tt-cyan); outline-offset: 6px; border-radius: 999px; }
     .title::before, .title::after {
       content: ""; position: absolute; width: 89.74%; height: 74%; border-radius: 999px;
     }
@@ -90,7 +96,7 @@
     /* ── Counter ── */
     .proof {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      font-size: 14px; color: var(--muted); margin: 8px 0 12px; min-height: 20px;
+      font-size: 14px; color: var(--muted); margin: 20px 0 22px; min-height: 20px;
       opacity: 0; transition: opacity .4s;
     }
     .proof.show { opacity: 1; }
@@ -147,7 +153,7 @@
 </head>
 <body>
   <main id="app">
-    <div class="title"><h1>Send a rejection</h1></div>
+    <div class="title" id="titleCta" role="button" tabindex="0" aria-label="Send a rejection: jump to the form"><h1>Send a rejection</h1></div>
     <p class="sub">Submit a challenge that'll probably get a “no.”</p>
 
     <div class="phones-wrap">
@@ -201,15 +207,15 @@
 
     // ─── Backend (falls back to a local demo mode with no keys) ──
     const demo = !SUPABASE_URL || !SUPABASE_ANON_KEY;
-    let sb = null;
-    if (!demo) {
-      const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-      sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
+    // Load the Supabase client without blocking the rest of the page
+    const sbReady = demo ? null :
+      import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm")
+        .then(({ createClient }) => createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
 
     const api = {
       async count() {
         if (demo) { try { return 37 + Number(localStorage.getItem("demoCount") || 0); } catch { return 37; } }
+        const sb = await sbReady;
         const { data, error } = await sb.rpc("get_submission_count");
         if (error) throw error;
         return Number(data);
@@ -220,6 +226,7 @@
           try { localStorage.setItem("demoCount", String(Number(localStorage.getItem("demoCount") || 0) + 1)); } catch {}
           return;
         }
+        const sb = await sbReady;
         const { error } = await sb.from("challenge_ideas").insert({
           idea,
           referrer: document.referrer || null,
@@ -284,6 +291,18 @@
       app.classList.remove("sent");
       btn.disabled = true;
       idea.focus();
+    });
+
+    // Title acts as a CTA: smooth-scroll down to the counter + form
+    function scrollToForm() {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const top = proof.getBoundingClientRect().top + window.scrollY - 16;
+      window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+    }
+    const titleCta = $("titleCta");
+    titleCta.addEventListener("click", scrollToForm);
+    titleCta.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); scrollToForm(); }
     });
 
     refreshCount();
